@@ -38,6 +38,10 @@ export const DefaultNegativeValues: Story = {
   },
 };
 
+export const RightOrientation: Story = {
+  args: { categories: ["Sales"], orientations: ["right"] },
+};
+
 export const ValueFormatter: Story = {
   args: { valueFormatter: valueFormatter, yAxisWidth: 60 },
 };
@@ -104,6 +108,21 @@ export const ConnectNullsTrue: Story = {
 
 export const ConnectNullsFalse: Story = {
   args: { data: simpleBaseChartDataWithNulls, connectNulls: false },
+};
+
+export const MultipleYAxes: Story = {
+  args: {
+    orientations: ["left", "right"],
+    valueFormatter: (value, index) => {
+      switch (index) {
+        case 0:
+        default:
+          return `${value} S`;
+        case 1:
+          return `${value} P`;
+      }
+    },
+  },
 };
 
 export const Animation: Story = {

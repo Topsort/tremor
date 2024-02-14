@@ -31,11 +31,12 @@ import {
   themeColorRange,
   tremorTwMerge,
 } from "lib";
-import { CurveType } from "../../../lib/inputTypes";
+import { CurveType, HorizontalPosition } from "../../../lib/inputTypes";
 
 export interface LineChartProps extends BaseChartProps {
   curveType?: CurveType;
   connectNulls?: boolean;
+  orientations?: HorizontalPosition[];
 }
 
 interface ActiveDot {
@@ -72,6 +73,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>((props, ref) 
     enableLegendSlider = false,
     customTooltip,
     rotateLabelX,
+    orientations,
     tickGap = 5,
     ...other
   } = props;
@@ -184,27 +186,58 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>((props, ref) 
               dy={rotateLabelX?.verticalShift}
               height={rotateLabelX?.xAxisHeight}
             />
-            <YAxis
-              width={yAxisWidth}
-              hide={!showYAxis}
-              axisLine={false}
-              tickLine={false}
-              type="number"
-              domain={yAxisDomain as AxisDomain}
-              tick={{ transform: "translate(-3, 0)" }}
-              fill=""
-              stroke=""
-              className={tremorTwMerge(
-                // common
-                "text-tremor-label",
-                // light
-                "fill-tremor-content",
-                // dark
-                "dark:fill-dark-tremor-content",
-              )}
-              tickFormatter={valueFormatter}
-              allowDecimals={allowDecimals}
-            />
+            {orientations ? (
+              categories.map((_, idx) => (
+                <YAxis
+                  width={yAxisWidth}
+                  hide={!showYAxis}
+                  axisLine={false}
+                  tickLine={false}
+                  type="number"
+                  domain={yAxisDomain as AxisDomain}
+                  tick={{
+                    transform: `translate(${orientations[idx] === "right" ? 3 : -3}, 0)`,
+                  }}
+                  fill=""
+                  stroke=""
+                  className={tremorTwMerge(
+                    // common
+                    "text-tremor-label",
+                    // light
+                    "fill-tremor-content",
+                    // dark
+                    "dark:fill-dark-tremor-content",
+                  )}
+                  tickFormatter={(value) => valueFormatter(value, idx)}
+                  allowDecimals={allowDecimals}
+                  orientation={orientations[idx] ?? "left"}
+                  yAxisId={idx}
+                  key={idx}
+                />
+              ))
+            ) : (
+              <YAxis
+                width={yAxisWidth}
+                hide={!showYAxis}
+                axisLine={false}
+                tickLine={false}
+                type="number"
+                domain={yAxisDomain as AxisDomain}
+                tick={{ transform: "translate(-3, 0)" }}
+                fill=""
+                stroke=""
+                className={tremorTwMerge(
+                  // common
+                  "text-tremor-label",
+                  // light
+                  "fill-tremor-content",
+                  // dark
+                  "dark:fill-dark-tremor-content",
+                )}
+                tickFormatter={valueFormatter}
+                allowDecimals={allowDecimals}
+              />
+            )}
             <Tooltip
               wrapperStyle={{ outline: "none" }}
               isAnimationActive={false}
@@ -255,7 +288,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>((props, ref) 
                 }
               />
             ) : null}
-            {categories.map((category) => (
+            {categories.map((category, idx) => (
               <Line
                 className={tremorTwMerge(
                   getColorClassNames(
@@ -341,10 +374,11 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>((props, ref) 
                 isAnimationActive={showAnimation}
                 animationDuration={animationDuration}
                 connectNulls={connectNulls}
+                yAxisId={orientations ? idx : undefined}
               />
             ))}
             {onValueChange
-              ? categories.map((category) => (
+              ? categories.map((category, idx) => (
                   <Line
                     className={tremorTwMerge("cursor-pointer")}
                     strokeOpacity={0}
@@ -363,6 +397,7 @@ const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>((props, ref) 
                       const { name } = props;
                       onCategoryClick(name);
                     }}
+                    yAxisId={orientations ? idx : undefined}
                   />
                 ))
               : null}

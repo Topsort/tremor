@@ -1,4 +1,3 @@
-
 <br />
 <br />
 <p align="center">
@@ -36,6 +35,10 @@
   <a href="https://www.tremor.so">Website</a>
 </h3>
 <br />
+
+<h1>Fork of Tremor</h1>
+<p>Note! You are currently looking at a fork of the original Tremor project. This fork carries <a href="https://github.com/tremorlabs/tremor/pull/857">a patch to support multiple y axes</a> and will be maintained until it (or a similar patch) hopefully lands upstream. Use at your own risk.</p>
+
   <h1>The react library to build dashboards fast</h1>
 </div>
 
